@@ -1,0 +1,147 @@
+<html lang="en">
+<!doctype html>
+    <head>
+        <meta charset="utf-8">
+        <style type="text/css">
+            head {font-size: 4em;}
+            body {font-size: 1.5em;}
+            .hiddle {display:none;}
+            .show {display:inline !important;}
+            button{
+                border: 2px solid black; background:#e5e4e2;
+                font-size:0.5em; font-weight: bold; color: black;
+                padding: 0.8em 2em;
+                margin-top: .4em;
+                    }
+            </style>
+
+
+
+</head>
+<body>
+  <p id="sayHello"> </p>
+  <!--  This is where the chart will be displayed -->
+  <div id="chartContainer" style="height: 260px; width:50%;"> </div>
+  <!--  Current Utilization text under the chart -->
+  <p id="currentUtil"></p>
+
+
+<!--  Importing all required libraries -->
+  <script src="libraries/p5.js" type="text/javascript"></script>
+  <script src="libraries/p5.dom.js" type="text/javascript"></script>
+  <script src="libraries/p5.sound.js" type="text/javascript"></script>
+  <script type="text/javascript" src="libraries/canvasjs.min.js"></script>
+  <script src="libraries/jquery.min.js"></script>
+
+
+
+
+  <script>
+  //document.write("Reading first var from text file", "<br />")
+
+//loading text file in variable
+  function preload() {
+    lines = loadStrings('current.txt');
+  };
+
+
+
+
+
+  //this funtion update bytes per second Utilization text under the graph
+  function setup() {
+
+
+  var txt = ("Current Link Utilization : " + lines[0] +  " Bytes / sec");
+
+  //jquery code for updating currentUtil text
+    $(function(){
+
+      $("#currentUtil").text(txt);
+        });
+
+
+
+}
+window.onload = function () {
+
+//CReating array fro storing data points
+  var dps = []; // dataPoints
+
+//var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+  var chart = new CanvasJS.Chart("chartContainer",{
+    title :{
+      text: "Capacity Monitor Log "
+    },
+    axisX:{ // x axis to be time
+           valueFormatString: "HH:mm" ,
+           labelAngle: -50
+       },
+    data: [{
+      xValueType: "dateTime", // x value type  will be dateTime
+      type: "spline", // Graph type now set to spline for smoothness
+      dataPoints: dps
+    }]
+  });
+
+  var xVal = 0;
+  var yVal = 100;
+  var updateInterval = 10000; // update interval as variable
+  var dataLength = 500; // number of dataPoints visible at any point
+
+  var updateChart = function (count) {
+    count = count || 1;
+    // count is number of times loop runs to generate random dataPoints.
+
+    for (var j = 0; j < count; j++) {
+       h = parseInt(lines[0]);
+    //  yVal = yVal +  Math.round(5 + Math.random() *(-5-5));
+    var time = new Date();
+
+    yVal = h;
+    xVal = time;
+  //  console.log(yVal);
+
+      dps.push({
+        x: xVal,
+        y: yVal
+      });
+      xVal++;
+    };
+    if (dps.length > dataLength)
+    {
+      dps.shift();
+    }
+
+    chart.render();
+
+  };
+
+  // generates first set of dataPoints
+  updateChart(dataLength);
+
+  // update chart after specified time.
+  setInterval(function(){preload()}, 300); // running preload function every 300 milliseconds
+  //NOTE :  preload and setup function reload time should not have common devisor for most stable data fetch
+    setInterval(function(){setup()}, 8000); // running setup funciton every 8000 milliseconds
+
+  setInterval(function(){updateChart()}, updateInterval);
+
+
+}
+
+
+
+
+
+    </script>
+
+
+
+
+
+
+</body>
+
+
+</html>

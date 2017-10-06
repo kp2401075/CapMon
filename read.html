@@ -1,0 +1,104 @@
+<html lang="en">
+<!doctype html>
+    <head>
+        <meta charset="utf-8">
+        <style type="text/css">
+            head {font-size: 4em;}
+            body {font-size: 1.5em;}
+            .hiddle {display:none;}
+            .show {display:inline !important;}
+            button{
+                border: 2px solid black; background:#e5e4e2;
+                font-size:0.5em; font-weight: bold; color: black;
+                padding: 0.8em 2em;
+                margin-top: .4em;
+                    }
+            </style>
+
+
+       </head>
+<body>
+<p id="sayHello"> </p>
+
+
+<script src="libraries/p5.js" type="text/javascript"></script>
+
+<script src="libraries/p5.dom.js" type="text/javascript"></script>
+<script src="libraries/jquery.min.js"></script>
+<script src="libraries/p5.sound.js" type="text/javascript"></script>
+<p id="currentUtil"></p>
+<canvas id="myCanvas" width="400" height="400" />
+
+
+<script>
+//document.write("Reading first var from text file", "<br />")
+
+
+function preload() {
+  lines = loadStrings('current.txt');
+};
+
+
+
+// Now we can do stuff with the text
+//var auto_refresh = setInterval(
+function setup() {
+// lines = loadStrings('current.txt');
+  // join() joins the elements of an array
+  // Here we pass in a line break to retain formatting
+
+  var txt = ("Current Link Utilization : " + lines[0] +  " Bytes / sec");
+
+  //jquery code for updating currentUtil text
+    $(function(){
+
+      $("#currentUtil").text(txt);
+        });
+
+
+
+
+  var h = parseInt(lines[0]);
+  var canvas = document.getElementById("myCanvas");
+  var ctx = canvas.getContext('2d');
+  ctx.fillStyle = 'white'
+ ctx.fillRect(0,0,canvas.width,canvas.height);
+// a = parseInt(lines[0]);
+      if(h > 160){
+          ctx.fillStyle = 'red';
+            }else if(h>100){
+                ctx.fillStyle = 'orange'
+              }
+              else{
+                  ctx.fillStyle = 'green';
+                  }
+
+
+
+  ctx.fillRect(10,canvas.height - h,100,h);
+
+
+};
+
+
+
+
+//setTimeout(setup, 10000);
+
+//to reload page every x millisecods
+setInterval(function(){preload()}, 333);
+setInterval(function(){setup()}, 2000);
+
+
+// setTimeout(function(){
+//     window.location.reload();
+//    }, 10000);
+
+</script>
+
+
+
+</body>
+
+
+</html>
